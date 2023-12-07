@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''fix'''
+'''fixing code to comply with annotation'''
 from typing import List, Tuple
 
 
