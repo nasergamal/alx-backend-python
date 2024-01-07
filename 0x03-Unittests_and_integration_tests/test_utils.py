@@ -46,28 +46,34 @@ class TestGetJson(unittest.TestCase):
         ("http://holberton.io", {"payload": False}),
         ])
     def test_get_json(self, test_url: str, test_payload: Dict) -> None:
+        '''test get_json method'''
         mockreq = unittest.mock.Mock()
         mockreq.json.return_value = test_payload
-        with unittest.mock.patch('requests.get', return_value=mockreq):
+        with unittest.mock.patch('requests.get', return_value=mockreq) as mock:
             self.assertEqual(get_json(test_url), test_payload)
+            mock.assert_called_once_with(test_url)
 
 
 class TestMemoize(unittest.TestCase):
     '''unittest memoization'''
-    def test_memoize(self):
-        '''memo'''
+    def test_memoize(self) -> None:
+        '''memoization'''
         class TestClass:
-
+            '''Test class'''
             def a_method(self):
+                '''a_method return integer 42'''
                 return 42
 
             @memoize
             def a_property(self):
+                '''
+                    a_property wrapped to prevent additional calls to a_method
+                '''
                 return self.a_method()
 
-        mem = TestClass()
-        with unittest.mock.patch.object(mem, 'a_method') as mock:
-            mock.return_value = 42
+        with unittest.mock.patch.object(TestClass, 'a_method',
+                                        return_value=42) as mock:
+            mem = TestClass()
             first = mem.a_property
             second = mem.a_property
             self.assertEqual(first, 42)

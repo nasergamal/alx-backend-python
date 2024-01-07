@@ -39,7 +39,7 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(client.org(), expected)
         getJson.assert_called_once_with(f"https://api.github.com/orgs/{org}")
 
-    def test_public_repos_url(self):
+    def test_public_repos_url(self) -> None:
         '''unit test for public_repos_url method'''
         value = {
             'login': 'google', 'id': 1342004,
