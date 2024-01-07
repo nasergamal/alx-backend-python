@@ -114,11 +114,22 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                 mock = Mock()
                 mock.json.return_value = urls[url]
                 return mock
-            return error
+            return requests.HTTPError
         cls.get_patcher = patch('requests.get', side_effect=payload)
         cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
-        '''tearDown'''
+        '''class tearDown method'''
         cls.get_patcher.stop()
+
+    def test_public_repos2(self) -> None:
+        '''unit test for public_repos method'''
+        test = GithubOrgClient('google')
+        self.assertEqual(test.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self) -> None:
+        '''puplic repos test with license'''
+        test = GithubOrgClient('google')
+        self.assertEqual(test.public_repos(license="apache-2.0"),
+                         self.apache2_repos)
