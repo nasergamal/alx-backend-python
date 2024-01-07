@@ -43,10 +43,11 @@ class TestGithubOrgClient(unittest.TestCase):
         '''unit test for public_repos_url method'''
         value = {
             'login': 'google', 'id': 1342004,
-            'repos_url': 'https://api.github.com/orgs/google/repos'}
+            'repos_url': 'https://api.github.com/orgs/google/repos'
+        }
         with patch('client.GithubOrgClient.org',
-                   new_callable=PropertyMock) as mock:
-            mock.return_value = value
+                   new_callable=PropertyMock,
+                   return_value=value) as mock:
             test = GithubOrgClient('google')
             self.assertEqual(test._public_repos_url, value["repos_url"])
 
@@ -115,7 +116,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                 return mock
             return error
         cls.get_patcher = patch('requests.get', side_effect=payload)
-        cls.get_patcher.start
+        cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):

@@ -12,6 +12,10 @@ from typing import (
     Union
 )
 import unittest
+from unittest.mock import (
+        Mock,
+        patch,
+)
 from utils import access_nested_map, get_json, memoize
 
 
@@ -45,13 +49,13 @@ class TestGetJson(unittest.TestCase):
         ("http://example.com", {"payload": True}),
         ("http://holberton.io", {"payload": False}),
         ])
-    def test_get_json(self, test_url: str, test_payload: Dict) -> None:
+    def test_get_json(self, url: str, payload: Dict) -> None:
         '''test get_json method'''
-        mockreq = unittest.mock.Mock()
-        mockreq.json.return_value = test_payload
-        with unittest.mock.patch('requests.get', return_value=mockreq) as mock:
-            self.assertEqual(get_json(test_url), test_payload)
-            mock.assert_called_once_with(test_url)
+        mockreq = Mock()
+        mockreq.json.return_value = payload
+        with patch('requests.get', return_value=mockreq) as mock:
+            self.assertEqual(get_json(url), payload)
+            mock.assert_called_once_with(url)
 
 
 class TestMemoize(unittest.TestCase):
@@ -71,11 +75,11 @@ class TestMemoize(unittest.TestCase):
                 '''
                 return self.a_method()
 
-        with unittest.mock.patch.object(TestClass, 'a_method',
-                                        return_value=42) as mock:
+        with patch.object(TestClass, 'a_method',
+                          return_value=Mock(return_value=42)) as mock:
             mem = TestClass()
-            first = mem.a_property
-            second = mem.a_property
+            first = mem.a_property()
+            second = mem.a_property()
             self.assertEqual(first, 42)
             self.assertEqual(second, 42)
             mock.assert_called_once()
