@@ -90,23 +90,23 @@ class TestGithubOrgClient(unittest.TestCase):
 
 
 @parameterized_class([
-    {'org': TEST_PAYLOAD[0][0], 'repos': TEST_PAYLOAD[0][1],
+    {'org_payload': TEST_PAYLOAD[0][0], 'repos_payload': TEST_PAYLOAD[0][1],
      'expected_repos': TEST_PAYLOAD[0][2], 'apache2_repos': TEST_PAYLOAD[0][3]}
     ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    '''integration test'''
+    '''integration tests for GithubOrgClient class'''
 
     @classmethod
-    def setUpClass(cls):
-        '''class set up'''
+    def setUpClass(cls) -> None:
+        '''class set up data for tests'''
         error = {
             "message": "Not Found",
             "documentation_url": "https://docs.github.com/rest" +
                                  "/orgs/orgs#get-an-organization"
         }
         urls = {
-            'https://api.github.com/orgs/google': cls.org,
-            'https://api.github.com/orgs/google/repos': cls.repos,
+            'https://api.github.com/orgs/google': cls.org_payload,
+            'https://api.github.com/orgs/google/repos': cls.repos_payload,
         }
 
         def payload(url):
@@ -114,12 +114,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                 mock = Mock()
                 mock.json.return_value = urls[url]
                 return mock
-            return requests.HTTPError
+            return error
         cls.get_patcher = patch('requests.get', side_effect=payload)
         cls.get_patcher.start()
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         '''class tearDown method'''
         cls.get_patcher.stop()
 
